@@ -61,3 +61,22 @@ def get_or_create_vectorstore(persist_directory="./Chroma", collection_name="car
     
     print(f"새로운 vectorstore를 생성했습니다. (문서 수: {len(split_docs)})")
     return vectorstore
+
+
+# 가장 유사한 청크 검색하는 함수 정의 
+def search_card(question, persist_directory="./Chroma", collection_name="card_info"):
+    """
+    카드 정보를 검색합니다.
+    """
+    # vectorstore 가져오기 (없으면 자동 생성)
+    vectorstore = get_or_create_vectorstore(persist_directory, collection_name)
+    
+    # retriever 실행
+    retriever = vectorstore.as_retriever()
+    result = retriever.invoke(question)
+    
+    card_context = []
+    for page in result:
+        card_context.append(page.page_content)
+    
+    return card_context
